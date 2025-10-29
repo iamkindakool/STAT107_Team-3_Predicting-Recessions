@@ -1,0 +1,19 @@
+##I think these only need to be installed once (per computer)
+install.packages("fredr")
+install.packages("ggplot2")
+
+## these are needed for every session
+library(fredr)
+install.packages("fredr")
+library(ggplot2)
+install.packages(ggplot2)
+
+##Here is where we put the key Remember not to put it into GitHub
+# --- FRED setup ---
+fredr_set_key("KEYKEYKEYKEY")
+
+# --- Get the U.S. Recession Indicator ---
+usrec <- fredr(series_id = "USREC")
+head(usrec)
+
+
