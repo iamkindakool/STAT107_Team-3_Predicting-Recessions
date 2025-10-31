@@ -1,0 +1,82 @@
+---
+title: "usrec_markdown"
+author: "Jimmy Ieng"
+date: "2025-10-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is the Fredr R file converted to an R Markdown file to make the file more organized
+
+#need to figure out how to access BLS
+#figure out timeframe to look at
+
+
+## installs the packages
+```{r cars}
+#install.packages("fredr", dependencies = TRUE)
+#install.packages("ggplot2")
+install.packages("blsAPI")
+```
+
+
+help menu for FREDR packages
+```{r pressure, echo=FALSE}
+?fredr_set_key
+```
+
+## unlocks access to Fred
+```{r}
+fredr_set_key("c859345561941fbef52080a4712c116b")
+```
+
+
+## Charles - "these are needed for every session"
+```{r}
+## these are needed for every session
+library(fredr)
+install.packages("fredr")
+library("ggplot2")
+install.packages("ggplot2")
+#library(blsAPI)
+```
+
+## pulls up the fredr data
+```{r}
+usrec <- fredr(series_id = "USREC")
+head(usrec)
+
+```
+
+## filtered out data excluding the dates and recession indicator
+```{r}
+USrec_date <- usrec[,c("date","value")]
+```
+
+
+
+
+# pulls up the S&P 500 and the created GSPC_adj to get just the trading volume and the adjusted closing price
+```{r}
+install.packages("quantmod")
+library(quantmod)
+getSymbols("^GSPC")  
+GSPC_adj <- GSPC[,5:6]
+```
+
+
+
+
+
+
+
+
+
+
+
+
