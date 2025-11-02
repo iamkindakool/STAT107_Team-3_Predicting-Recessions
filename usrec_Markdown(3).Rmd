@@ -1,0 +1,127 @@
+---
+title: "usrec_markdown"
+author: "Jimmy Ieng"
+date: "2025-10-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is the Fredr R file converted to an R Markdown file to make the file more organized
+
+#need to figure out how to access BLS
+#figure out timeframe to look at
+
+
+## installs the packages
+```{r cars}
+#install package, but rstudio can't locate it
+install.packages("fredr", dependencies = TRUE)
+
+```
+
+```{r cars}
+#checks where the path is located
+# should be in a path called LibPath which starts with " and ends with "
+installed.packages()["fredr",]
+```
+
+```{r cars}
+# helps Rstudio finds the path
+#replace path with the path your path
+.libPaths("C:/Users/jimmy/AppData/Local/R/win-library/4.4")
+
+library(fredr)
+
+#this is to check if its installed, if installed prints TRUE else FAlSE
+"fredr" %in% loadedNamespaces()
+```
+
+```{r}
+library(fredr)
+library(dplyr)
+```
+
+
+#help menu for FREDR packages
+```{r pressure, echo=FALSE}
+?fredr_set_key
+```
+
+## unlocks access to Fred
+```{r}
+fredr_set_key("c859345561941fbef52080a4712c116b")
+```
+
+
+## Charles - "these are needed for every session"
+```{r}
+## these are needed for every session
+library(fredr)
+install.packages("fredr")
+library("ggplot2")
+install.packages("ggplot2")
+#library(blsAPI)
+```
+
+## pulls up the fredr data
+```{r}
+usrec <- fredr(series_id = "USREC")
+head(usrec)
+```
+
+## filtered out data excluding the dates and recession indicator
+```{r}
+USrec_date <- usrec[,c("date","value")]
+```
+
+
+
+
+# pulls up the S&P 500 and the created GSPC_adj to get just the trading volume and the adjusted closing price
+```{r}
+install.packages("quantmod")
+library(quantmod)
+getSymbols("^GSPC") 
+
+#Gets the index with the first day of the month
+GSPC_monthly <- to.monthly(GSPC, indexAt = "lastof", OHLC = TRUE)
+first_of_month <- as.Date(format(index(GSPC_monthly), "%Y-%m-01"))
+index(GSPC_monthly) <- first_of_month
+
+# Convert to data frame (keeps column names)
+GSPC_monthly_df <- data.frame(date = index(GSPC_monthly), coredata(GSPC_monthly))
+
+# Select only date, volume, and closing price
+GSPC_adj <- GSPC_monthly_df[, c("date", "GSPC.Volume", "GSPC.Close")]
+
+head(GSPC_adj)
+
+```
+
+
+
+
+
+#import unemployment_rates.csv, then run this to rename the data
+
+```{r}
+names(unemployment_rates) <- c("Date", "rate (%)")
+```
+
+
+```{r}
+
+combined <- Reduce(function(x, y) merge(x, y, by = "date", all = TRUE),
+                   list(usrec, unemployment_rates, GSPC_adj))
+
+combined <- combined[,-2]
+names(combined)[c(2,5)] <- c("Recess", "UnempRate")
+```
+
+
+
