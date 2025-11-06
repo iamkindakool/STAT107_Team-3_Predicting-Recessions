@@ -1,6 +1,10 @@
-#Jimmy- created the markdown files, analyzed, cleaned, and combined whatever data we found from the different datasets  
-merge into a single dataset to analyze
+#Jimmy(data analyzer)
+- Created repository
+- Created the markdown file for Data_Cleaning01, analyzed, cleaned, and combined whatever data we found from the different datasets 
+into a single dataset to analyze in Data_Cleaning01
 
-#Charles- help find the data for usrec(US Recessions), GSPC(S&P 500 stocks),and created the unemployment rate csv file 
+#Charles(data gatherer)
+- Help find the data for usrec(US Recessions), GSPC(S&P 500 stocks),and created the unemployment rate csv file
+- Created the usrec_test.R to get access to the US Recessions in RStudio
 
 #Guanlin- 
