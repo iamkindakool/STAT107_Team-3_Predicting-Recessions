@@ -13,34 +13,41 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #This is the Fredr R file converted to an R Markdown file to make the file more organized
 
+```{r}
+
+```
 
 ## installs the packages
 ```{r cars}
 #install package, but rstudio can't locate it
-install.packages("fredr", dependencies = TRUE)
-
+#install.packages("fredr", dependencies = TRUE)
+# make sure 00requirements.R is in the same folder your markdown file is in
+# get the file of the requirements.R
+source("00_requirements.R")
 ```
 
+```{r}
+#checks if R can find the fredr package
+"fredr" %in% loadedNamespaces()
+```
+
+
 ```{r cars}
-#checks where the path is located
+# R can't find the fredr path, so we will have to manually find it
+
+#this code checks where the path is located
 # should be in a path called LibPath which starts with " and ends with "
 installed.packages()["fredr",]
 ```
 
 ```{r cars}
 # helps Rstudio finds the path
-#replace path with the path your path
+#replace current path with your path
 .libPaths("/cloud/lib/x86_64-pc-linux-gnu-library/4.5")
 
-library(fredr)
 
 #this is to check if its installed, if installed prints TRUE else FAlSE
 "fredr" %in% loadedNamespaces()
-```
-
-```{r}
-library(fredr)
-library(dplyr)
 ```
 
 
@@ -58,14 +65,14 @@ fredr_set_key("c859345561941fbef52080a4712c116b")
 ## Charles - "these are needed for every session"
 ```{r}
 ## these are needed for every session
-library(fredr)
-install.packages("fredr")
-library("ggplot2")
-install.packages("ggplot2")
+#library(fredr)
+#install.packages("fredr")
+#library("ggplot2")
+#install.packages("ggplot2")
 #library(blsAPI)
 ```
 
-## pulls up the fredr data
+## pulls up the fredr(years of UC recessions) data
 ```{r}
 usrec <- fredr(series_id = "USREC")
 head(usrec)
@@ -81,8 +88,8 @@ USrec_date <- usrec[,c("date","value")]
 
 # pulls up the S&P 500 and the created GSPC_adj to get just the trading volume and the adjusted closing price
 ```{r}
-install.packages("quantmod")
-library(quantmod)
+#install.packages("quantmod")
+#library(quantmod)
 getSymbols("^GSPC") 
 
 #Gets the index with the first day of the month
@@ -104,7 +111,7 @@ head(GSPC_adj)
 
 
 
-#import unemployment_rates.csv, then run this to rename the data
+#import unemployment_rates.csv from repository, then run this to rename the data
 
 ```{r}
 names(unemployment_rates) <- c("date", "rate (%)")
@@ -124,6 +131,6 @@ names(combined)[c(2,5)] <- c("Recess", "UnempRate")
 
 # THIS WILL BE THE DATA WE WILL LOOK AT
 ```{r}
-completed_combined <- combined[complete.cases(combined),]
+recession_indicators <- combined[complete.cases(combined),]
 ```
 
