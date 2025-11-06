@@ -11,10 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-This is the Fredr R file converted to an R Markdown file to make the file more organized
-
-#need to figure out how to access BLS
-#figure out timeframe to look at
+#This is the Fredr R file converted to an R Markdown file to make the file more organized
 
 
 ## installs the packages
@@ -113,7 +110,7 @@ head(GSPC_adj)
 names(unemployment_rates) <- c("date", "rate (%)")
 ```
 
-
+#makes a new dataset with all the datasets combined
 ```{r}
 
 combined <- Reduce(function(x, y) merge(x, y, by = "date", all = TRUE),
@@ -123,5 +120,10 @@ combined <- combined[,-2]
 names(combined)[c(2,5)] <- c("Recess", "UnempRate")
 ```
 
+# gets the rows that has all the columns filled
 
+# THIS WILL BE THE DATA WE WILL LOOK AT
+```{r}
+completed_combined <- combined[complete.cases(combined),]
+```
 
