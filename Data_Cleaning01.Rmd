@@ -11,29 +11,25 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## R Markdown
 
-#This is the Fredr R file converted to an R Markdown file to make the file more organized
-
-```{r}
-
-```
 
 ## installs the packages
 ```{r cars}
-#install package, but rstudio can't locate it
-#install.packages("fredr", dependencies = TRUE)
 # make sure 00requirements.R is in the same folder your markdown file is in
+
 # get the file of the requirements.R
 source("00_requirements.R")
 ```
 
 ```{r}
-#checks if R can find the fredr package
-"fredr" %in% loadedNamespaces()
+#checks if R can find the fredr package, if installed prints TRUE else FALSE
+"fredr" %in% installed.packages()[, "Package"] # checks if installed
+"fredr" %in% loadedNamespaces() #checks if loaded
+#may have to run source() again
 ```
 
 
 ```{r cars}
-# R can't find the fredr path, so we will have to manually find it
+# if R can't load,then that means the fredr path but has it installed, so we will have to manually find it
 
 #this code checks where the path is located
 # should be in a path called LibPath which starts with " and ends with "
@@ -41,12 +37,13 @@ installed.packages()["fredr",]
 ```
 
 ```{r cars}
+
 # helps Rstudio finds the path
 #replace current path with your path
-.libPaths("/cloud/lib/x86_64-pc-linux-gnu-library/4.5")
-
-
-#this is to check if its installed, if installed prints TRUE else FAlSE
+.libPaths("C:/Users/jimmy/AppData/Local/R/win-library/4.4")
+#library(fredr)
+#this is to check again,
+"fredr" %in% installed.packages()[, "Package"]
 "fredr" %in% loadedNamespaces()
 ```
 
@@ -62,15 +59,6 @@ fredr_set_key("c859345561941fbef52080a4712c116b")
 ```
 
 
-## Charles - "these are needed for every session"
-```{r}
-## these are needed for every session
-#library(fredr)
-#install.packages("fredr")
-#library("ggplot2")
-#install.packages("ggplot2")
-#library(blsAPI)
-```
 
 ## pulls up the fredr(years of UC recessions) data
 ```{r}
@@ -88,8 +76,7 @@ USrec_date <- usrec[,c("date","value")]
 
 # pulls up the S&P 500 and the created GSPC_adj to get just the trading volume and the adjusted closing price
 ```{r}
-#install.packages("quantmod")
-#library(quantmod)
+#downloads S&P 500 stocks
 getSymbols("^GSPC") 
 
 #Gets the index with the first day of the month
