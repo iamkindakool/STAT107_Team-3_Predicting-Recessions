@@ -5,7 +5,9 @@
 #Data_Cleaning01.Rmd: R markdown file used to clean and combine the three datasets into one.
 
 #Final report.Rmd: the R Markdown with the report
+- For the data visualizations, we tried to have a map of the unemployment rate and do a graph with the years to see if spikes in the rate were because of recessions.
+ However, we were having trouble importing the combined dataset from Data_Cleaning01 into the final report.
 
 #unemployment_rates.csv: CSV file with the unemployment rate
 
-#usrec_test2.r: used to created the unemployment_rates.csv
+#usrec_test2.r: used to create the unemployment_rates.csv
