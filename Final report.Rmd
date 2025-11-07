@@ -37,10 +37,9 @@ What is the data available for performing the analysis? Where did you retrieve t
 Answer here:
 Datasets and Sources:
 
-Trading and Stock Values - Yahoo!
-Economic Recession - Federal Reserve
+s&P 500 stocks - Yahoo!
+Economic Recession Dates - Federal Reserve
 Unemployment Rate - Federal Reserve
-Closing Price - Federal Reserve
 
 Variables and Observations:
 
@@ -66,5 +65,19 @@ Answer here:
 After we found out the data and have a question. we will think an hypothesis, make plot, use the plot to anylsis hypothesis, use result to answer the question. we can find and way to perdict next recession. 
 
 
+## Contributions 
+#Jimmy(data analyzer)
+- Created repository 
+- Created and wrote the Readme file
+- Created and worked on the markdown file for Data_Cleaning01, analyzed, cleaned, and combined the data found in the different datasets 
+into a single dataset to analyze in Data_Cleaning01
 
+#Charles(data gatherer)
+- Help find the data for Fredr(US Recessions), GSPC(S&P 500 stocks),and created the unemployment rate csv file
+- Created the usrec_test2.R to get access to the unemployment rate.csv 
+- Helped get the code to get Fredr data and S&P 500 into RStudio
+
+#Guanlin(data reporter)
+- Created and worked on the 00.requirements.R
+- Created and wrote the final report
 
