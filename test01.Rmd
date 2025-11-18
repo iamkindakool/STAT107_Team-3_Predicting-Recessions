@@ -1,0 +1,54 @@
+---
+title: "Hypothesis_test01"
+author: "Jimmy Ieng"
+date: "2025-11-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+source("00_requirements.R")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+## import the datset "recession_indicators.csv" from github
+
+```{r cars}
+options(scipen = 999)
+Recession_regression <- glm(Recess ~ UnempRate + GSPC.Volume + GSPC.Close, data = recession_indicators)
+
+summary(Recession_regression)
+```
+# all of the data are statistically significant
+
+# I think a multiple regression model would be best to use
+
+# higher unemployment rate = more likely for recession
+
+# higher volume = less likely recession
+
+#higher closing price = more likely recession
+```{r}
+# Get predicted probabilities
+recession_indicators$pred_prob <- predict(Recession_regression, type = "response")
+
+# Plot
+plot(
+  recession_indicators$pred_prob,
+  recession_indicators$Recess,
+  xlab = "Predicted Probability",
+  ylab = "Actual Recession (0/1)",
+  main = "Logistic Regression: Predicted Probability vs Actual"
+)
+
+# Add a trend line
+abline(glm(Recess ~ pred_prob, data = recession_indicators), col = "blue", lwd = 2)
+
+```
+
