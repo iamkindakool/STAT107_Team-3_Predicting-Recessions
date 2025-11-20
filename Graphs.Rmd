@@ -1,0 +1,89 @@
+---
+title: "Untitled"
+author: "Jimmy Ieng"
+date: "2025-11-20"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+library(ggplot2)
+library(dplyr)
+set.seed(0)
+dates <- seq(as.Date("2004-01-01"), as.Date("2025-01-01"), by = "month")
+n <- length(dates)
+prob <- pmin(pmax(0.2 + 0.15*sin(seq(0, 14, length.out=n)) + 0.05*rnorm(n), 0), 1)
+recessions <- tibble(
+  xmin = as.Date(c("2007-12-01", "2020-03-01")),
+  xmax = as.Date(c("2009-06-01", "2020-10-01"))
+)
+df <- tibble(date = dates, prob = prob)
+ggplot(df, aes(x=date, y=prob)) +
+  geom_rect(data = recessions,
+            aes(xmin=xmin, xmax=xmax, ymin=-Inf, ymax=Inf),
+            inherit.aes=FALSE, fill="goldenrod", alpha=0.25) +
+  geom_line(color="goldenrod", linewidth=1.2) +
+  geom_hline(yintercept=c(0.2,0.4), color="goldenrod", linetype="dashed") +
+  geom_point(data=df[n,], color="goldenrod", size=2) +
+  annotate("text", x=df$date[n], y=df$prob[n],
+           label=sprintf("Now: %.1f%%", df$prob[n]*100),
+           
+           hjust=-0.1, vjust=0.5) +
+  scale_y_continuous(limits=c(0,1)) +
+  labs(title="Predicted Probability of Recession (1-Month Ahead)",
+       y="Probability", x=NULL) +
+  theme_minimal(base_size=12)
+```
+
+```{r}
+library(ggplot2)
+d_unemp <- seq(-1, 1, length.out=200)
+sp_ret <- seq(-15, 15, length.out=200)
+grid <- expand.grid(d_unemp=d_unemp, sp_ret=sp_ret)
+grid$prob <- 1 / (1 + exp(-(3*grid$d_unemp + 0.1*grid$sp_ret)))
+ggplot(grid, aes(x=d_unemp, y=sp_ret, fill=prob)) +
+geom_raster(interpolate=TRUE) +
+scale_fill_viridis_c(name="Prob.") +
+labs(title="Recession Risk Landscape (Logit Model)",
+x="Monthly change in unemployment (pp)",
+y="S&ampP 500 monthly return (%)") +
+theme_minimal(base_size=12)
+```
+
+```{r}
+library(ggplot2)
+d_unemp <- seq(-1, 1, length.out=200)
+sp_ret <- seq(-15, 15, length.out=200)
+grid <- expand.grid(d_unemp=d_unemp, sp_ret=sp_ret)
+grid$prob <- 1 / (1 + exp(-(3*grid$d_unemp + 0.1*grid$sp_ret)))
+ggplot(grid, aes(x=d_unemp, y=sp_ret, fill=prob)) +
+geom_raster(interpolate=TRUE) +
+scale_fill_viridis_c(name="Prob.") +
+labs(title="Recession Risk Landscape (Logit Model)",
+x="Monthly change in unemployment (pp)",
+y="S&ampP 500 monthly return (%)") +
+theme_minimal(base_size=12)
+```
+
