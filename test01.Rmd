@@ -17,7 +17,13 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 
-## import the datset "recession_indicators.csv" from github
+## I think a multiple regression model would be best to use
+
+# import the datset "recession_indicators.csv" from github
+
+## Null = none of the variables has a relationship with causing a recession
+
+## Alt = atleast one of the variables has a relationship with causing a recession
 
 ```{r cars}
 options(scipen = 999)
@@ -25,15 +31,23 @@ Recession_regression <- glm(Recess ~ UnempRate + GSPC.Volume + GSPC.Close, data 
 
 summary(Recession_regression)
 ```
+
+```{r}
+1-pchisq(18.148 - 10.321, 215 - 212)
+```
+
+# P-VALUE = 0.04972573
 # all of the data are statistically significant
 
-# I think a multiple regression model would be best to use
+# reject null hypothesis as all the data p-value are less than 5%
 
-# higher unemployment rate = more likely for recession
 
-# higher volume = less likely recession
 
-#higher closing price = more likely recession
+# higher unemployment rate = less likely for recession
+
+# higher volume = more likely recession
+
+#higher closing price = less likely recession
 ```{r}
 # Get predicted probabilities
 recession_indicators$pred_prob <- predict(Recession_regression, type = "response")
@@ -49,6 +63,5 @@ plot(
 
 # Add a trend line
 abline(glm(Recess ~ pred_prob, data = recession_indicators), col = "blue", lwd = 2)
-
 ```
 
