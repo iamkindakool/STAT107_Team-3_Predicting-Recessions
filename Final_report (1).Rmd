@@ -1,0 +1,107 @@
+---
+title: "Final Report"
+author: "Jimmy Ieng"
+date: "2025-12-03"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
+
+
+```{r cars, include = FALSE} 
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+source("00_requirements.R")
+```
+
+
+```{r pressure, echo=FALSE}
+recession_indicators <- read.csv("recession_indicators.csv")
+Recession_regression <- glm(Recess ~ UnempRate + GSPC.Volume + GSPC.Close, data = recession_indicators, family = binomial)
+
+
+```
+
+
+
+```{r}
+pairs(
+  recession_indicators[,6:8],
+      label = c("unemployment", "Trade Volume", "Close Price"),
+      col = ifelse(recession_indicators$Recess == 1, "red", "blue")
+      )
+```
+
+
+
+## Diagnostics
+
+```{r, echo = FALSE}
+plot(Recession_regression)
+
+```
+
+
+Here are four diagnostic plots from the linear model. There is a Residual vs. Fitted, Q-Q Residuals, Scale Location, and Residuals vs. Leverage plot. These plots help us analyze patterns and outliers in the data we are looking at. Based on the four graphs, most of the data follow a pattern in each. However, every graph has some sort of outlier. In most plots, there are two distinct patterns. This is probably because the plots are separating the data into those associated with a recession and those not.
+
+
+Residual vs. Fitted:
+Residual vs. Fitted plot are used to check whether our data are linear and whether there are any strange patterns, as the points should be randomly distributed. In the plot, it is hard to tell whether they are spread out, since there are only two y-values, 0 and 1. However, there are no noticeable patterns that suggest anything might be off with our data. So this plot doesn’t show that our model doesn’t capture the relationships between our variables.
+
+Q-Q Residuals:
+Q-Q Residual plots are used to see if the variables align with the dotted line to check if our residuals are normally distributed. In the graph, the majority of the data lies on the line. However, when going towards the right tail, the points get more spread out and go farther away from the line. There are also some huge outliers, as shown by points 14, 17, and 160. Based on the results, most of the data we have follows a normal distribution. However, we have to be wary of those few outliers that could affect our data.
+
+Scale-Location: 
+Scale-location plots are used to find any signs of heteroscedasticity. There are minimal signs of heteroscedasticity, with a slight bump near x = 0. This plot shows that the model is homoscedastic, mainly indicating it fits well.
+
+Residuals vs. Leverage: 
+Residual vs. Leverage plots are used to identify influential points that may be affecting our model. In the plot, there is high leverage and low residual. There is an outlier that sticks out as point 16 at an abnormally high residual. Although there is an outlier with a high residual, the plot fits the model well.
+
+
+Conclusion:
+Based on all the graphs, there are not many recurring issues involving heteroscedasticity, linearity, distribution, and influential points. Even though the plots show the model is a good fit, we still need to be wary of these small outliers, just in case.
+
+
+
+## Analysis
+
+```{r, echo=FALSE}
+options(scipen = 5)
+summary(Recession_regression)
+```
+Unemployment rate:
+For unemployment rates, we are given an estimate of -8.136e-01, indicating an inverse relationship between unemployment rates and recessions. This implies that lower unemployment rates are more associated with a recession. The variable also has a p-value of 0.002111, indicating that it is highly significant in predicting recessions. 
+
+Note: A reason for high unemployment doesn’t indicate a recession might be from the fact that unemployment rate reports may be delayed, and layoffs usually happen later on in the recession
+
+S&P 500 Trade Volume: 
+For the Trade Volume, we are given an estimate of 1.096e-10, indicating that higher trade is associated with a recession. The variable has a p-value of 0.000155, which is very small and suggests that it is highly significant in predicting recessions.
+
+
+S&P 500 Closing Price: 
+For the Closing Prices, we are given an estimate of -2.750e-03, which again shows an inverse relationship. This implies that the lower closing prices are more associated with causing a recession. The variable has a p-value of 0.002214, which is also very small and shows that it is highly significant in predicting recessions.
+
+
+
+# Using the model to predict the recession
+
+Time to test how accurate our model is compared to actual recessions
+```{r, echo=FALSE}
+data_important_recess <- recession_indicators[c(13,31,159,161),]
+
+prob_pred <- predict.glm(Recession_regression, newdata = data_important_recess, type = "response")
+
+problist_df <- data.frame(
+  dates = c("Jan 2008","Jun 2009","Mar 2020","Jun 2020"),
+  recession_prob = round(prob_pred, 3)  
+)
+
+problist_df
+```
+
+We will compare our prediction results to the start and end dates of recessions that have occurred and determine whether they align with those dates. We have the beginning of the 2008 recession in January 2008 and the end of that recession in June 2009. Our other recession in 2020 started in March 2020 and ended in June 2020. Before the 2008 recession, it was said there was only a 63.8% chance of a recession, and predicting the month it ends, we get a 24.5% chance. For our second recession in 2020, at the start, we got 99.1% and, by the end, 0.000%. The prediction matches the actual data, demonstrating that the model can predict a recession one month in advance.
+
