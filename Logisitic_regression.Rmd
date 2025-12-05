@@ -1,0 +1,93 @@
+---
+title: "Hypothesis_test01"
+author: "Jimmy Ieng"
+date: "2025-11-16"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+source("00_requirements.R")
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+
+## I think a multiple regression model would be best to use
+
+import the datset "recession_indicators.csv" from github
+
+Null = 0 (none of the variables has a relationship with causing a recession)
+
+Alt != 0 (atleast one of the variables has a relationship with causing a recession)
+
+```{r cars ,echo=FALSE}
+recession_indicators <- read.csv("recession_indicators.csv")
+options(scipen = 999)
+Recession_regression <- glm(Recess ~ UnempRate + GSPC.Volume + GSPC.Close, data = recession_indicators)
+```
+
+ y = -0.2639548309702501 + -0.0394694141138171 * UnempRate + 0.0000000000098387 * Volume + -0.0000988752318664 * Close
+
+# confidence interval
+
+```{r }
+confint(Recession_regression, level = 0.95)
+```
+# the CI is very narrow for all the variables
+
+
+
+```{r, echo=FALSE}
+plot(Recession_regression)
+summary(Recession_regression)
+```
+
+#calculating P-value of regression model
+
+using chi-square to find p-value(null deviance - Residual deviance, dfNull - dfResidual)
+
+```{r}
+1-pchisq(18.148 - 10.321, 215 - 212)
+
+```
+
+# P-VALUE = 0.04972573
+all of the data are statistically significant
+
+reject null hypothesis as all the data p-value are less than 5%
+
+
+higher unemployment rate = less likely for recession
+
+higher volume = more likely recession
+
+higher closing price = less likely recession
+
+#Plotting
+trying to figure out a useful plot for the regression model
+
+Still working on it
+```{r, echo= FALSE}
+# Get predicted probabilities
+recession_indicators$pred_prob <- predict(Recession_regression, type = "response")
+
+# Plot
+plot(
+  recession_indicators$pred_prob,
+  recession_indicators$Recess,
+  xlab = "Predicted Probability",
+  ylab = "Actual Recession (0/1)",
+  main = "Logistic Regression: Predicted Probability vs Actual"
+)
+
+```
+
