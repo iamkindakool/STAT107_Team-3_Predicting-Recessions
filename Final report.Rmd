@@ -151,13 +151,13 @@ problist_df
 - Created and wrote the Readme file
 - Created and worked on the markdown file for Data_Cleaning01, analyzed, cleaned, and combined the data found in the different datasets 
 into a single dataset to analyze in Data_Cleaning01
-- worked on the Diagnostics report.rmd by using Logistic regression to predict recessions
+- worked on the Logistic regression to use for Diagnostics and using it to predict recessions
 
 #Charles(data gatherer)
 - Help find the data for Fredr(US Recessions), GSPC(S&P 500 stocks),and created the unemployment rate csv file
 - Created the usrec_test2.R to get access to the unemployment rate.csv 
 - Helped get the code to get Fredr data and S&P 500 into RStudio
-- helped get visualizations
+- helped get graphs for visualizations
 
 #Guanlin(data reporter)
 - Created and worked on the 00.requirements.R
