@@ -5,6 +5,27 @@ date: "2025-11-06"
 output: html_document
 ---
 
+
+```{r cars, include = FALSE} 
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+
+source("00_requirements.R")
+```
+
+```{r, include = FALSE}
+install.packages("imager")
+library(imager)
+```
+
+
+```{r pressure, echo=FALSE}
+recession_indicators <- read.csv("recession_indicators.csv")
+Recession_regression <- glm(Recess ~ UnempRate + GSPC.Volume + GSPC.Close, data = recession_indicators, family = binomial)
+
+
+```
+
+
 ##Abstract
 
   This project aims to explore, using the R programming language, whether recent US economic data can be used to predict impending economic recessions. We analyzed several financial indicators from the past five years, such as the unemployment rate and the S&P 500 performance. We examined how changes in these indicators correlated and whether they consistently signaled periods of economic weakness, thus helping us to predict future recessions and their end. This research will help us analyze charts and historical data and determine our hypotheses. Finally, we will build a model to predict the probability of a recession at some point in the future.
@@ -46,12 +67,51 @@ Data process and objective:
 
 ##Visualization
 
+```{r, echo = FALSE}
+
+im0 = load.image("C:/Users/jieng002/Documents/plot1_recession_probability.png")
+plot(im0)
+
+im1 = load.image("C:/Users/jieng002/Downloads/unemployment with both recessions.jpg")
+plot(im1)
+
+im2 = load.image("C:/Users/jieng002/Downloads/S&P with both recessions.jpg")
+plot(im2)
+```
+
+
+
+```{r, echo = FALSE}
+pairs(
+  recession_indicators[,6:8],
+      label = c("unemployment", "Trade Volume", "Close Price"),
+      col = ifelse(recession_indicators$Recess == 1, "red", "blue")
+      )
+```
+
+
+
   We use histograms, pair graphs, and scatter plots to analyze and answer questions for our models and hypotheses, and to visualize the trends of economic recessions. First, we'll use two histograms to visualize our economic variables (unemployment rate and stock market performance – the S&P 500 return). This will help us see how these variables have trended and provide percentage answers as economic recessions have progressed. Next, we'll use a pair graph to compare the unemployment rate and the S&P 500 return. This will help us further analyze how the trends of these two variables correlate before the changes in the economic recession, providing more accurate answers for our hypotheses and models.
 
 ##Analysis
 
   To simulate the risk of economic recession, we fitted a logistic regression model in R, using recession status (recession vs. non-recession) as a binary response variable:
+  
 
+```{r, echo = FALSE}
+plot(Recession_regression)
+
+```  
+  
+
+  Diagnostic plots (residuals vs. fitted values, normal Q-Q plot, scale-location plot, and residuals vs. leverage plot) do not show any serious violations of model assumptions, although a few months of extreme market volatility resulted in larger residuals, which could be considered potential outliers. However, these situations do not materially change the overall conclusions, and the fitted model remains stable.
+  
+```{r, echo=FALSE}
+options(scipen = 5)
+summary(Recession_regression)
+```
+  
+  
   Unemployment Rate: For the unemployment rate, we obtained an estimate of -8.136e-01, indicating a negative correlation between unemployment and recession. This means that a lower unemployment rate is more strongly associated with a recession. The p-value for this variable is also 0.002111, indicating its high significance in predicting recessions.
 
   Note: A high unemployment rate does not necessarily indicate a recession, possibly due to the lag in unemployment rate reporting and the fact that layoffs typically occur later in a recession.
@@ -60,7 +120,20 @@ Data process and objective:
 
   S&P 500 Closing Price: For the closing price, our estimate is -2.750e-03, also showing a negative correlation. This means that lower closing prices are more strongly associated with recessions. The p-value for this variable is also very small at 0.002214, indicating its high significance in predicting recessions.
 
-  Diagnostic plots (residuals vs. fitted values, normal Q-Q plot, scale-location plot, and residuals vs. leverage plot) do not show any serious violations of model assumptions, although a few months of extreme market volatility resulted in larger residuals, which could be considered potential outliers. However, these situations do not materially change the overall conclusions, and the fitted model remains stable.
+
+```{r, echo=FALSE}
+data_important_recess <- recession_indicators[c(13,31,159,161),]
+
+prob_pred <- predict.glm(Recession_regression, newdata = data_important_recess, type = "response")
+
+problist_df <- data.frame(
+  dates = c("Jan 2008","Jun 2009","Mar 2020","Jun 2020"),
+  recession_prob = round(prob_pred, 3)  
+)
+
+problist_df
+```
+
 
   Using the model, we calculated the monthly predicted recession probability and compared it to historical recession dates in the U.S. national economic record. The predicted probability rose to 68% at the start of the Great Recession in January 2008 and fell to 24.5% near the end of the Great Recession in June 2009. Regarding the 2020 economic recession, the model predicted a 99.1% probability in March 2020, which dropped to almost 0% by June 2020. These results are in excellent agreement with our model. This model can provide an effective one-month early warning signal for a US economic recession.
 
@@ -78,11 +151,13 @@ Data process and objective:
 - Created and wrote the Readme file
 - Created and worked on the markdown file for Data_Cleaning01, analyzed, cleaned, and combined the data found in the different datasets 
 into a single dataset to analyze in Data_Cleaning01
+- worked on the Diagnostics report.rmd by using Logistic regression to predict recessions
 
 #Charles(data gatherer)
 - Help find the data for Fredr(US Recessions), GSPC(S&P 500 stocks),and created the unemployment rate csv file
 - Created the usrec_test2.R to get access to the unemployment rate.csv 
 - Helped get the code to get Fredr data and S&P 500 into RStudio
+- helped get visualizations
 
 #Guanlin(data reporter)
 - Created and worked on the 00.requirements.R
