@@ -4,9 +4,7 @@
 
 #Data_Cleaning01.Rmd: R markdown file used to clean and combine the three datasets into one.
 
-#Final report.Rmd(Final Report(1).Rmd is the latest version of the final report): the R Markdown with the report
-- For the data visualizations, we tried to have a map of the unemployment rate and do a graph with the years to see if spikes in the rate were because of recessions.
- However, we were having trouble importing the combined dataset from Data_Cleaning01 into the final report.
+#Final report.Rmd: the R Markdown with the report
 
 #unemployment_rates.csv: CSV file with the unemployment rate
 
@@ -15,3 +13,13 @@
 #recession_indicators.csv: CSV file with the combined dataset from Data_Cleaning01
 
 #test01.Rmd: markdown file to test whether the data is significant
+
+#01_recession_probability_plot.R: used to make the plot that shows the predicted probability of the recession
+
+#Diagnostics_Report.Rmd: a report from the logistic regression used to predict recessions
+
+#S&P with both recessions.jpg: graph comparing S&P and recessions
+
+#unemployment with both recessions.jpg: graph comparing unemployment & recessions
+
+#plot1_recession_probability.png: result of 01_recession_probability_plot.R
