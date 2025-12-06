@@ -1,0 +1,190 @@
+---
+title: "Assessing and predicting the likelihood of an economic recession and its onset."
+author: "Guanlin Huang"
+date: "2025-11-06"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+```{r cars, include = FALSE} 
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+
+source("00_requirements.R")
+```
+
+```{r, include = FALSE}
+install.packages("imager")
+library(imager)
+```
+
+
+```{r pressure, echo=FALSE}
+recession_indicators <- read.csv("recession_indicators.csv")
+Recession_regression <- glm(Recess ~ UnempRate + GSPC.Volume + GSPC.Close, data = recession_indicators, family = binomial)
+
+
+```
+
+
+##Abstract
+
+  This project aims to explore, using the R programming language, whether recent US economic data can be used to predict impending economic recessions. We analyzed several financial indicators from the past five years, such as the unemployment rate and the S&P 500 performance. We examined how changes in these indicators correlated and whether they consistently signaled periods of economic weakness, thus helping us to predict future recessions and their end. This research will help us analyze charts and historical data and determine our hypotheses. Finally, we will build a model to predict the probability of a recession at some point in the future.
+
+## Introduction
+
+  This analysis will explore whether recent U.S. financial data can be used to warn of a potential economic recession. This analysis will help our users prepare for an impending economic downturn. We attempt to test a hypothesis to understand whether we can use data to predict trends and prepare for an upcoming recession.
+
+  The main question we try to answer is can we predict the coming recession and its duration by using enough research and recent trends in a large amount of key U.S. economic data (such as the S&P 500 and unemployment rate)?
+
+  This analysis will benefit economists, policymakers, investors, and finance and economics students interested in understanding the structure and future trajectory of the U.S. economy.
+
+  The goal of this analysis is to test the following hypotheses and attempt to train a model that can predict recessions; based on our chosen data model, we believe recent U.S. economic data can be used to predict future economic trends. We will use the unemployment rate and S&P 500 to build a recession prediction model.
+
+This project aims to provide evidence-based insights and answers to the health and trends of the future U.S. economy by using the analysis of historical data and the development of predictive models.
+
+## Data 
+Datasets and Sources:
+
+s&P 500 stocks - Yahoo!
+Economic Recession Dates - Federal Reserve
+Unemployment Rate - Federal Reserve
+
+Variables and Observations:
+
+Date (Time Period)
+GDP Growth Rate (%)
+Unemployment Rate (%)
+Federal Funds Rate (%)
+Major Stock Index Closing Price $
+
+Data process and objective:
+  
+  This analysis is based on US economic and financial data, including inflation, unemployment, and stock market performance (S&P 500 returns). For each variable, we used at least five years of observational data. All data are sourced from publicly available financial and economic databases, representing actual historical data rather than simulated values.
+
+  To construct a single data set for the analysis, we downloaded and updated the data set by date. We removed missing values or obviously erroneous observations to maintain data source consistency. We converted all date fields to a common format and standardized the time frequency of each variable to monthly. Where necessary, we converted variables to percentage changes or ratios, such as the monthly returns of the S&P 500 and the monthly changes in the unemployment rate.
+
+  The resulting data set is a clear and consistent panel of key economic variables, which will help refine the model in the rest of this analysis.
+
+##Visualization
+
+```{r, echo = FALSE}
+##Please be sure to change the image path to the path of the image you downloaded from GitHub to your computer.
+
+im0 = load.image("C:/Users/glh61/Downloads/plot1_recession_probability.png")
+plot(im0)
+
+im1 = load.image("C:/Users/glh61/Downloads/unemployment with both recessions.jpg")
+plot(im1)
+
+im2 = load.image("C:/Users/glh61/Downloads/S&P with both recessions.jpg")
+plot(im2)
+```
+
+
+Predicted Probability of Recession:
+
+This graph shows how the model's predicted probability of a recession changes over time. We can compare it to historical recession periods. We can see that this graph largely aligns with historical major recessions. For example, the model successfully identified the higher risks associated with the 2008-2009 recession and gave a high probability warning. The sharp spike to nearly 100% at the beginning of 2020 indicates that the model also identified the sudden deterioration of economic conditions during the COVID-19 pandemic. Apart from the aforementioned periods, the predicted probabilities mostly remained at low levels, with only brief and minor fluctuations, meaning the model avoided consistently issuing false alarms.
+
+Unemployment with Great & COVID Recessions:
+
+This chart shows how the U.S. unemployment rate has changed over time, with shaded areas marking the periods of the Great Recession and the economic recession triggered by the COVID-19 pandemic. The chart shows that the unemployment rate typically rises sharply during economic downturns and gradually declines during economic recovery. During the Great Recession, the unemployment rate rose from around 4% to around 10%, then slowly declined over the next decade. In contrast, the economic recession triggered by the COVID-19 pandemic saw a more sudden and extreme surge, with the unemployment rate jumping to approximately 14% to 15% in 2020, before rapidly falling back as the economy reopened. The chart clearly demonstrates that the unemployment rate is a significant lagging indicator that reflects the actual impact of an economic recession.
+
+S&P 500 with Great & COVID Recessions:
+
+This chart shows the closing prices of the S&P 500 index and highlights its performance during the Great Recession and the COVID-19 pandemic recession, illustrating how financial markets react during major economic downturns. During the Great Recession, the chart shows a sharp decline in the index, reflecting pessimism about the stock market and resistance to investment. During the COVID-19 pandemic, the chart also shows a rapid decline followed by a strong rebound. This demonstrates the S&P 500's responsiveness to economic recessions.
+
+```{r, echo = FALSE}
+pairs(
+  recession_indicators[,6:8],
+      label = c("unemployment", "Trade Volume", "Close Price"),
+      col = ifelse(recession_indicators$Recess == 1, "red", "blue")
+      )
+```
+
+This paired chart compares three key indicators—the unemployment rate, S&P 500 trading volume, and S&P 500 closing price—and uses a scatter plot to show the pairwise relationships between them, with the scatter colors representing recessionary periods (red for recession months and blue for non-recession months). Visually, the chart shows that recessions tend to be concentrated during periods of weak stock performance and unusually high market activity, as the red dots appear more concentrated when closing prices are low and trading volumes are high. The unemployment rate, on the other hand, shows a more concentrated red dot pattern during periods of stock market downturn. In conclusion, this visualization helps explain why these three variables were chosen for the logistic regression model analysis.
+
+  We use histograms, pair graphs, and scatter plots to analyze and answer questions for our models and hypotheses, and to visualize the trends of economic recessions. First, we'll use two histograms to visualize our economic variables (unemployment rate and stock market performance – the S&P 500 return). This will help us see how these variables have trended and provide percentage answers as economic recessions have progressed. Next, we'll use a pair graph to compare the unemployment rate and the S&P 500 return. This will help us further analyze how the trends of these two variables correlate before the changes in the economic recession, providing more accurate answers for our hypotheses and models.
+
+##Analysis
+
+  To simulate the risk of economic recession, we fitted a logistic regression model in R, using recession status (recession vs. non-recession) as a binary response variable:
+  
+
+```{r, echo = FALSE}
+plot(Recession_regression)
+
+```  
+  Here are four common diagnostic plots for linear models: Residuals vs. Fitted Values, Q-Q Residuals, Scale-Location, and Residuals vs. Leverage. These plots are primarily used to examine the model fit, the presence of systematic patterns, and to identify potential outliers or high-impact points. Overall, most data points exhibit some structural characteristics in all four plots, but a small number of outliers are observed in each. Furthermore, two distinct distribution trends are visible in most plots, which may be related to the data itself containing observations that are "related to the recession" and "unrelated to the recession."
+  
+  Residuals vs. Fitted Values: This plot is used to check if the data exhibits a linear relationship and if any anomalous patterns exist, as the points should be randomly distributed. In this plot, with only two y-values (0 and 1), it is difficult to determine if the data is scattered. However, no obvious pattern suggests any potential problems with our data. Therefore, this plot does not indicate that our model has failed to capture the relationships between variables.
+
+Residual vs. Fitted Values Plot: This plot checks if the residuals are randomly distributed around 0 to determine the reasonableness of the linear relationship specification and the presence of obvious outlier patterns. Since the dependent variable in this model only has two possible values (0 and 1), it is difficult to determine if the data is scattered. However, no obvious pattern indicates any potential problems with our data. Therefore, this plot does not suggest that our model fails to capture the relationship between variables.
+
+Q-Q Residual Plot: This plot examines whether the residuals approximately follow a normal distribution. In the plot, most data points lie on the dashed line. However, as the right tail moves, the data points become more scattered and move away from the dashed line. Several large outliers are also marked (e.g., points 14, 17, and 160), suggesting that while the overall distribution trend is acceptable, attention should still be paid to the potential impact of a few extreme observations on the results.
+
+Scale-Location Plot: This plot determines the presence of heteroscedasticity. The overall trend in the plot is relatively stable, with only a slight bulge in the region where x is close to 0, indicating that signs of heteroscedasticity are not obvious. This suggests that the model's variance structure is relatively stable, and its overall fit is good.
+
+Residual vs. Leverage Plot: This plot is used to identify potentially high-impact observations. Most points in the plot exhibit the characteristic of "high leverage but low residuals," indicating a relatively stable overall structure. However, a prominent outlier (point 16) can still be observed, with significantly high residuals, which may have some influence. Despite this outlier, the plot still fits the model well.
+
+  Diagnostic plots (residuals vs. fitted values, normal Q-Q plot, scale-location plot, and residuals vs. leverage plot) do not show any serious violations of model assumptions, although a few months of extreme market volatility resulted in larger residuals, which could be considered potential outliers. However, these situations do not materially change the overall conclusions, and the fitted model remains stable.
+  
+```{r, echo=FALSE}
+options(scipen = 5)
+summary(Recession_regression)
+```
+  
+  
+  Unemployment Rate: For the unemployment rate, we obtained an estimate of -8.136e-01, indicating a negative correlation between unemployment and recession. This means that a lower unemployment rate is more strongly associated with a recession. The p-value for this variable is also 0.002111, indicating its high significance in predicting recessions.
+
+  Note: A high unemployment rate does not necessarily indicate a recession, possibly due to the lag in unemployment rate reporting and the fact that layoffs typically occur later in a recession.
+
+  S&P 500 Trading Volume: For trading volume, we obtained an estimate of 1.096e-10, indicating a correlation between higher trading volume and recession. The p-value for this variable is 0.000155, which is very small, indicating its high significance in predicting recessions.
+
+  S&P 500 Closing Price: For the closing price, our estimate is -2.750e-03, also showing a negative correlation. This means that lower closing prices are more strongly associated with recessions. The p-value for this variable is also very small at 0.002214, indicating its high significance in predicting recessions.
+
+
+```{r, echo=FALSE}
+data_important_recess <- recession_indicators[c(13,31,159,161),]
+
+prob_pred <- predict.glm(Recession_regression, newdata = data_important_recess, type = "response")
+
+problist_df <- data.frame(
+  dates = c("Jan 2008","Jun 2009","Mar 2020","Jun 2020"),
+  recession_prob = round(prob_pred, 3)  
+)
+
+problist_df
+```
+
+
+  Using the model, we calculated the monthly predicted recession probability and compared it to historical recession dates in the U.S. national economic record. The predicted probability rose to 68% at the start of the Great Recession in January 2008 and fell to 24.5% near the end of the Great Recession in June 2009. Regarding the 2020 economic recession, the model predicted a 99.1% probability in March 2020, which dropped to almost 0% by June 2020. These results are in excellent agreement with our model. This model can provide an effective one-month early warning signal for a US economic recession.
+
+
+##Conclusion
+
+  The aim of this project is to investigate whether recent US economic and financial variables can be used to predict economic recessions. We constructed a logistic regression model using the unemployment rate, S&P 500 trading volume, and closing price as predictor variables. The results showed a significant statistical association between these variables and the risk of economic recession. The predicted probability of recession increased significantly during periods of rising unemployment, increased trading volume, and falling stock prices.
+
+  Interestingly, even with limited and publicly available financial data, we can still observe warnings that are highly consistent with historical recessions, especially in scenarios where "rising unemployment and a weakening stock market overlap," where the probability of a recession given by the model increases significantly.
+
+  However, this model is far from perfect. It is based on a limited number of variables and a relatively small sample of recession events. Furthermore, it does not account for structural changes, policy interventions, or unusual shocks. Therefore, future research could expand this analysis by incorporating more predictive factors and other financial variables, and by testing and adding more flexible models to achieve more accurate analysis, thereby capturing trend changes and early warnings.
+
+## Contributions 
+#Jimmy(data analyzer)
+- Created repository 
+- Created and wrote the Readme file
+- Created and worked on the markdown file for Data_Cleaning01, analyzed, cleaned, and combined the data found in the different datasets 
+into a single dataset to analyze in Data_Cleaning01
+- worked on the Logistic regression to use for Diagnostics and using it to predict recessions
+
+#Charles(data gatherer)
+- Help find the data for Fredr(US Recessions), GSPC(S&P 500 stocks),and created the unemployment rate csv file
+- Created the usrec_test2.R to get access to the unemployment rate.csv 
+- Helped get the code to get Fredr data and S&P 500 into RStudio
+- helped get graphs for visualizations
+
+#Guanlin(data reporter)
+- Created and worked on the 00.requirements.R
+- Created and wrote the final report
+
