@@ -12,7 +12,7 @@
 
 #recession_indicators.csv: CSV file with the combined dataset from Data_Cleaning01
 
-#test01.Rmd: markdown file to test whether the data is significant
+#Graphs.rmd: markdown files with experimental graphs
 
 #01_recession_probability_plot.R: used to make the plot that shows the predicted probability of the recession
 
